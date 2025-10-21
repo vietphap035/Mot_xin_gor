@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../API_CHAT/API_CHAT.csproj" />
+  <Project Path="../ShareModel/ShareModel.csproj" Id="95ed440d-d37c-4a0a-af3c-65691b97ed98" />
+  <Project Path="Mot_xin_gor.csproj">
+    <Deploy Solution="Debug|*" />
+  </Project>
+</Solution>
