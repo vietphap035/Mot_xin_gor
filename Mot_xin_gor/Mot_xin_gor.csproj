@@ -61,4 +61,8 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-rc.2.25502.107" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\ShareModel\ShareModel.csproj" />
+	</ItemGroup>
+
 </Project>
