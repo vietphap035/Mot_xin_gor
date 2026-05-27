@@ -13,8 +13,11 @@ namespace ShareModel
         [Key]
         public string MId { get; set; }
 
-        [Required]
-        public string Content { get; set; }
+        public MessageType MessageType { get; set; } 
+
+        public string? Content { get; set; }
+
+        public string? Url { get; set; }
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 
         [Required]
@@ -26,5 +29,11 @@ namespace ShareModel
         public string RId { get; set; }
         [ForeignKey("RId")]
         public virtual Room Room { get; set; }
+
+        public string ImageUrl =>
+            MessageType == MessageType.Image && !string.IsNullOrEmpty(Url)
+                ? $"{ApiConfig.BaseUrl}{Url}"
+                : null;
+
     }
 }
