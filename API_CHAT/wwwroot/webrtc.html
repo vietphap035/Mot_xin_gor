@@ -1,0 +1,67 @@
+﻿<script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr/dist/browser/signalr.min.js"></script>
+
+<script>
+function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
+let roomId = getQueryParam('roomId'); // read roomId from query string
+
+let pc = new RTCPeerConnection();
+let connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://localhost:5000/callhub")
+    .build();
+
+async function ensureMedia() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach(t => pc.addTrack(t, stream));
+    } catch (err) {
+        console.error('getUserMedia failed', err);
+        alert('Microphone access required for calls.');
+    }
+}
+
+pc.onicecandidate = e => {
+    if (e.candidate && roomId)
+        connection.invoke("SendIce", roomId, JSON.stringify(e.candidate));
+};
+
+connection.on("ReceiveOffer", async offer => {
+    await pc.setRemoteDescription(JSON.parse(offer));
+    let answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    connection.invoke("SendAnswer", roomId, JSON.stringify(answer));
+});
+
+connection.on("ReceiveAnswer", async answer => {
+    await pc.setRemoteDescription(JSON.parse(answer));
+});
+
+connection.on("ReceiveIce", async ice => {
+    await pc.addIceCandidate(JSON.parse(ice));
+});
+
+async function startCall() {
+    if (!roomId) {
+        alert('roomId not set.');
+        return;
+    }
+    await ensureMedia();
+    let offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    connection.invoke("SendOffer", roomId, JSON.stringify(offer));
+}
+
+function setRoomId(rid) {
+    roomId = rid;
+}
+
+// start connection and join room when connection ready
+connection.start().then(() => {
+    if (roomId) {
+        connection.invoke("JoinRoom", roomId);
+    }
+}).catch(err => console.error(err));
+</script>
