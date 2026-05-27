@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+</head>
+<body>
+    <script>
+let pc;
+let roomId;
+let connection;
+
+const pcConfig = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+};
+
+async function init(room) {
+    roomId = room;
+    pc = new RTCPeerConnection(pcConfig);
+
+    connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:5000/callHub")
+        .build();
+
+    connection.on("ReceiveOffer", offer => {
+        if (confirm("📞 Có cuộc gọi đến. Chấp nhận?")) {
+            onReceiveOffer(offer);
+        }
+    });
+
+    connection.on("ReceiveOffer", onReceiveOffer);
+    connection.on("ReceiveAnswer", onReceiveAnswer);
+    connection.on("ReceiveIce", ice => pc.addIceCandidate(JSON.parse(ice)));
+    connection.on("CallEnded", endCall);
+
+    pc.onicecandidate = e => {
+        if (e.candidate)
+            connection.invoke("SendIce", roomId, JSON.stringify(e.candidate));
+    };
+
+    pc.ontrack = e => {
+        const audio = document.createElement("audio");
+        audio.srcObject = e.streams[0];
+        audio.autoplay = true;
+    };
+
+    await connection.start();
+    await connection.invoke("JoinRoom", roomId);
+}
+
+async function startCall(room) {
+    await init(room);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => pc.addTrack(t, stream));
+
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+
+    connection.invoke("SendOffer", roomId, JSON.stringify(offer));
+}
+
+async function onReceiveOffer(offer) {
+    await init(roomId);
+
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => pc.addTrack(t, stream));
+
+    await pc.setRemoteDescription(JSON.parse(offer));
+    const answer = await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+
+    connection.invoke("SendAnswer", roomId, JSON.stringify(answer));
+}
+
+async function onReceiveAnswer(answer) {
+    await pc.setRemoteDescription(JSON.parse(answer));
+}
+
+function endCall() {
+    pc.close();
+}
+    </script>
+</body>
+</html>

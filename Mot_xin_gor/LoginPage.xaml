@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Mot_xin_gor.LoginPage"
+             Title="LoginPage">
+    <ScrollView>
+        <Grid Padding="20" RowDefinitions="Auto, *, *">
+
+            <!-- Logo và tiêu đề -->
+            <HorizontalStackLayout Grid.Row="0" HorizontalOptions="Center" Margin="0,40,0,20">
+                <Label Text="BRAVO NET"
+               FontSize="36"
+               VerticalOptions="Center"
+               TextColor="Black"
+               Margin="0,0,10,0"/>
+                <Image Source="dotnet_bot.png"
+               WidthRequest="60"
+               HeightRequest="100" />
+            </HorizontalStackLayout>
+
+            <!-- Form đăng nhập -->
+            <VerticalStackLayout Grid.Row="1"
+                         Spacing="10"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center">
+
+                <Label Text="Enter your username below"
+               FontSize="16"
+               TextColor="Black"
+               HorizontalTextAlignment="Center" />
+
+                <Entry x:Name="UsernameEntry"
+               Placeholder="Username"
+               WidthRequest="400" />
+
+                <Label Text="Enter your password below"
+               FontSize="16"
+               TextColor="Black"
+               HorizontalTextAlignment="Center" />
+
+                <Entry x:Name="PasswordEntry"
+               Placeholder="Password"
+               IsPassword="True"
+               WidthRequest="400" />
+                <Label Text="Enter your address server"
+                       FontSize="16"
+                       TextColor="Black"
+                       HorizontalTextAlignment="Center" />
+
+                <Entry x:Name="AddressEntry"
+                       Placeholder="Address"
+                       WidthRequest="400" />
+
+                <Button Text="Login"
+                x:Name="LoginButton"
+                Clicked="OnLoginClicked"
+                BackgroundColor="DodgerBlue"
+                TextColor="White"
+                WidthRequest="100"
+                HorizontalOptions="Center"
+                Margin="0,20,0,0" />
+
+                <Label x:Name="StatusLabel"
+                TextColor="Red"
+                FontSize="12"
+                Grid.Row="4"
+                HorizontalOptions="Center" />
+
+
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center" Margin="0,20,0,0">
+                <Label x:Name="Register" 
+                       Text="Chưa có tài khoản ?"
+                       
+                       HorizontalOptions="Center"/>
+                <Label x:Name="RegisterLink" 
+                       TextColor="Blue"
+                       Text="Chó ế"
+                       HorizontalOptions="Center"
+                       Margin="10,0,0,0"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

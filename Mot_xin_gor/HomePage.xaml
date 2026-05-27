@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                 x:Class="Mot_xin_gor.HomePage"
+                 Title="Home"
+                    xmlns:local="clr-namespace:Mot_xin_gor">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="TextSenderTemplate">
+                <Grid HorizontalOptions="Fill">
+                    <HorizontalStackLayout HorizontalOptions="End" Padding="10">
+                        <Border BackgroundColor="#0084FF"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="10">
+                            <Label Text="{Binding Content}"
+                       TextColor="White"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="TextReceiverTemplate">
+                <Grid HorizontalOptions="Fill">
+                    <HorizontalStackLayout HorizontalOptions="Start" Padding="10">
+                        <Border BackgroundColor="#3E4042"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="10">
+                            <Label Text="{Binding Content}"
+                       TextColor="White"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="ImageSenderTemplate">
+                <Grid HorizontalOptions="Fill">
+                    <HorizontalStackLayout HorizontalOptions="End" Padding="10">
+                        <Border BackgroundColor="#0084FF"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="10">
+                            <Image
+                                Source="{Binding ImageUrl}"
+                                HeightRequest="180"
+                                WidthRequest="180"
+                                Aspect="AspectFill"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate x:Key="ImageReceiverTemplate">
+                <Grid HorizontalOptions="Fill">
+                    <HorizontalStackLayout HorizontalOptions="Start" Padding="10">
+                        <Border BackgroundColor="#3E4042"
+                                StrokeShape="RoundRectangle 16"
+                                Padding="10">
+                            <Image
+                                    Source="{Binding ImageUrl}"
+                                    HeightRequest="180"
+                                    WidthRequest="180"
+                                    Aspect="AspectFill"/>
+                        </Border>
+                    </HorizontalStackLayout>
+                </Grid>
+            </DataTemplate>
+            <local:ChatTemplateSelector
+                x:Key="ChatSelector"
+                TextSenderTemplate="{StaticResource TextSenderTemplate}"
+                TextReceiverTemplate="{StaticResource TextReceiverTemplate}"
+                ImageSenderTemplate="{StaticResource ImageSenderTemplate}"
+                ImageReceiverTemplate="{StaticResource ImageReceiverTemplate}"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <Grid ColumnDefinitions="320, *" BackgroundColor="#18191A">
+
+        <Grid Grid.Column="0" RowDefinitions="Auto, Auto, *" Padding="10">
+
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,10,0,15">
+                <Label Text="Đoạn chat" 
+                               FontSize="24" 
+                               FontAttributes="Bold" 
+                               TextColor="White" 
+                               VerticalOptions="Center"/>
+                <Button Grid.Column="1" 
+                                Text="+" 
+                                FontSize="20"
+                                HeightRequest="36" WidthRequest="36"
+                                CornerRadius="18"
+                                BackgroundColor="#3E4042" 
+                                TextColor="White"   
+                                Clicked="OnCreateGroupClicked">
+                </Button>
+            </Grid>
+
+            <Border Grid.Row="1" 
+                            StrokeShape="RoundRectangle 20" 
+                            BackgroundColor="#3E4042" 
+                            StrokeThickness="0"
+                            HeightRequest="40"
+                            Margin="0,0,0,15">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Label Text="🔍" VerticalOptions="Center" Margin="10,0,0,0" TextColor="#B0B3B8"/>
+                    <Entry Grid.Column="1" 
+                                   Placeholder="Tìm kiếm trên Messenger" 
+                                   PlaceholderColor="#B0B3B8"
+                                   TextColor="White"
+                                   Background="Transparent" 
+                                   VerticalOptions="Center"/>
+                </Grid>
+            </Border>
+
+            <ScrollView Grid.Row="2">
+                <CollectionView x:Name="lstRooms">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="60, *" Padding="5" Margin="10" BackgroundColor="#2D2F31">
+                                <Grid.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="UserSelection"
+                                                              NumberOfTapsRequired="1"
+                                                              CommandParameter="{Binding rId}" />
+                                </Grid.GestureRecognizers>
+
+                                <Border StrokeShape="RoundRectangle 30" HeightRequest="50" WidthRequest="50">
+                                    <Image Source="dotnet_bot.png" Aspect="AspectFill" BackgroundColor="Gray"/>
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                    <Label Text="{Binding displayName}" TextColor="White" FontAttributes="Bold"/>
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Grid.Column="0" Text="{Binding lastMessage}" TextColor="#B0B3B8" FontSize="13" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                        <Label Grid.Column="1" Text="{Binding timeAgo}" TextColor="#B0B3B8" FontSize="12" Margin="10,0,0,0" HorizontalOptions="End"/>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Grid>
+
+        <Grid Grid.Column="1" RowDefinitions="Auto, *, Auto" BackgroundColor="Black">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="15" BackgroundColor="#18191A" HeightRequest="70">
+                <HorizontalStackLayout Spacing="10" Grid.Column="0">
+                    <Border StrokeShape="RoundRectangle 20" HeightRequest="40" WidthRequest="40">
+                        <Image Source="dotnet_bot.png" Aspect="AspectFill" BackgroundColor="Gray"/>
+                    </Border>
+                    <VerticalStackLayout VerticalOptions="Center">
+                        <Label x:Name="lblChatHeaderName" Text="Hội thoại" TextColor="White" FontAttributes="Bold"/>
+                        <Label Text="Đang hoạt động" TextColor="#B0B3B8" FontSize="12"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+                <Button Text="📞 Gọi" Clicked="OnCallClicked" Grid.Column="1" HorizontalOptions="End"    />
+                <Button Text="Rời nhóm" Grid.Column="2" HorizontalOptions="End" Clicked="LeaveRoom"/>
+            </Grid>
+            
+            
+            <CollectionView Grid.Row="1" x:Name="lstMessages" 
+                    ItemsSource="{Binding MessagesCollection}"
+                    ItemTemplate="{StaticResource ChatSelector}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="2" />
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+            <Grid Grid.Row="2" ColumnDefinitions="Auto, *, Auto" Padding="10" BackgroundColor="#18191A">
+                <HorizontalStackLayout Grid.Column="0" Spacing="15" VerticalOptions="Center" Margin="0,0,10,0">
+                    <Label Text="📷" TextColor="#0084FF" FontSize="20"/>
+                    <Button Text="🖼️" TextColor="#0084FF" FontSize="20" Clicked="ChooseImage"/>
+                </HorizontalStackLayout>
+
+                <Border Grid.Column="1" StrokeShape="RoundRectangle 20" BackgroundColor="#3E4042" StrokeThickness="0" HeightRequest="40">
+                    <Entry Placeholder="Aa" 
+                    PlaceholderColor="#B0B3B8" 
+                    TextColor="White" 
+                    VerticalOptions="Center" 
+                    Margin="10,0"
+                    TextChanged="OnMessageTextChanged"
+                    x:Name="messageInput"/>
+                </Border>
+                <Button x:Name="btnSendOrLike" Grid.Column="2" Text="👍" TextColor="#0084FF" FontSize="24" VerticalOptions="Center" Margin="10,0,0,0" Clicked="SendMessage"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>
